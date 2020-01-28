@@ -3,6 +3,8 @@ const app = express()
 const cors = require('cors')
 const routes = require('./src/routes');
 
+app.use('/uploads', express.static('uploads'))
+
 app.use(express.json())
 app.use(cors())
 

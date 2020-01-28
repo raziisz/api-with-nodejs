@@ -1,5 +1,6 @@
 const pool = require('../querys')
 
+
 module.exports = {
   async index(req, res) { 
     const client = await pool.connect();
@@ -13,6 +14,7 @@ module.exports = {
             id: prod.id,
             nome: prod.name,
             preco: prod.preco,
+            imagem_produto: prod.imagem_produto,
             request: {
               tipo: 'GET',
               descricao: 'Retorna um produto',
@@ -32,16 +34,22 @@ module.exports = {
 
   },
   async store(req, res) {
+    console.log(req.file)
     const {nome, preco} = req.body;
+    const imagemProduto = req.file.path.replace('\\', '/')
+    
     const client = await pool.connect();
     try {
-      const result = await client.query('INSERT INTO products (name, preco) values ($1, $2)', [nome, preco])
+      const result = await client.query(
+        'INSERT INTO products (name, preco, imagem_produto) values ($1, $2, $3)',
+         [nome, preco, imagemProduto])
       const response = {
         message: 'Produto criado com sucesso',
         produtoCriado: {
           id: result.id,
           nome,
-          preco
+          preco,
+          imagemProduto
         },
         request: {
           tipo: 'POST',
@@ -54,7 +62,7 @@ module.exports = {
     } catch (error) {
       return res.status(500).send({error})
     } finally {
-      await client.release();
+      client.release();
     }
    
   },
@@ -81,9 +89,12 @@ module.exports = {
       }
       res.status(200).send(response)
     } catch (error) {
-      console.log(error.stack)
+      return res.status(500).send({
+        message: 'Deu ruim na parada',
+        error
+      })
     } finally {
-      await client.release()
+      client.release()
     }
   },
   async update(req, res) {
