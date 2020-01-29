@@ -32,7 +32,6 @@ module.exports = {
 
   },
   async store(req, res) {
-    console.log(req.file)
     const {nome, preco} = req.body;
     const imagemProduto = req.file.path.replace('\\', '/')
     

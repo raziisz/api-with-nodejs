@@ -2,6 +2,7 @@ const express = require("express");
 const routes = express.Router();
 
 const multer = require('multer')
+const authenticate = require('./../middleware/login');
 
 const storage = multer.diskStorage({
   destination: function(req, file, callback) {
@@ -24,15 +25,15 @@ const RequestController = require('./controllers/RequestController')
 const UserController = require('./controllers/UserController')
 
 routes.get("/produtos", ProductController.index);
-routes.post("/produtos", upload.single('produto_imagem'), ProductController.store);
+routes.post("/produtos", authenticate.verificar, upload.single('produto_imagem'), ProductController.store);
 routes.get("/produtos/:id", ProductController.show);
-routes.put("/produtos/:id", ProductController.update);
-routes.delete("/produtos/:id", ProductController.destroy);
+routes.put("/produtos/:id", authenticate.verificar, ProductController.update);
+routes.delete("/produtos/:id", authenticate.verificar, ProductController.destroy);
 
 routes.get("/pedidos", RequestController.index);
-routes.post("/pedidos", RequestController.store);
+routes.post("/pedidos", authenticate.verificar, RequestController.store);
 routes.get("/pedidos/:id", RequestController.show);
-routes.delete("/pedidos/:id", RequestController.destroy);
+routes.delete("/pedidos/:id", authenticate.verificar, RequestController.destroy);
 
 routes.post('/cadastro', UserController.new);
 routes.post('/login', UserController.login);
