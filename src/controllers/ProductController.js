@@ -27,8 +27,6 @@ module.exports = {
       
     } catch (error) {
       return res.status(500).send({error})
-    } finally {
-      client.release();
     }
     
 
@@ -61,12 +59,10 @@ module.exports = {
       
     } catch (error) {
       return res.status(500).send({error})
-    } finally {
-      client.release();
     }
    
   },
-  async show(req, res) {
+  async show(req, res, next) {
     const { id } = req.params;
     try {
       const client = await pool.connect()
@@ -93,8 +89,6 @@ module.exports = {
         message: 'Deu ruim na parada',
         error
       })
-    } finally {
-      client.release()
     }
   },
   async update(req, res) {
@@ -130,9 +124,7 @@ module.exports = {
 
     } catch (error) {
       res.status(500).send({error})
-    } finally {
-      await client.release()
-    }
+    } 
   },
   async destroy(req, res) {
     const { id } = req.params
@@ -163,9 +155,7 @@ module.exports = {
     }
     } catch (error) {
       return res.status(400).send({error})
-    } finally {
-      await client.release();
-    }
+    } 
 
   }
 };

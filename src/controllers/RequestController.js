@@ -39,8 +39,6 @@ module.exports = {
       
     } catch (error) {
       return res.status(500).send({error})
-    } finally {
-      client.release();
     }
     
 
@@ -70,9 +68,7 @@ module.exports = {
       
     } catch (error) {
       return res.status(500).send({error})
-    } finally {
-      await client.release();
-    }
+    } 
    
   },
   async show(req, res) {
@@ -99,8 +95,6 @@ module.exports = {
       res.status(200).send(response)
     } catch (error) {
       console.log(error.stack)
-    } finally {
-      await client.release()
     }
   },
   async destroy(req,res) {
@@ -132,9 +126,7 @@ module.exports = {
     }
     } catch (error) {
       return res.status(400).send({error})
-    } finally {
-      await client.release();
-    }
+    } 
 
   }
 };

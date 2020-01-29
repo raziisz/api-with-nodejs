@@ -21,6 +21,7 @@ const upload = multer({
 
 const ProductController = require('./controllers/ProductController')
 const RequestController = require('./controllers/RequestController')
+const UserController = require('./controllers/UserController')
 
 routes.get("/produtos", ProductController.index);
 routes.post("/produtos", upload.single('produto_imagem'), ProductController.store);
@@ -32,5 +33,7 @@ routes.get("/pedidos", RequestController.index);
 routes.post("/pedidos", RequestController.store);
 routes.get("/pedidos/:id", RequestController.show);
 routes.delete("/pedidos/:id", RequestController.destroy);
+
+routes.post('/cadastro', UserController.new);
 
 module.exports = routes;
