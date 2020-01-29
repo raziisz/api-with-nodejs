@@ -1,5 +1,7 @@
 const pool = require('../querys')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const { authSecret } = require('./../../.env')
 module.exports = {
   async new(req, res) {
     const {email, senha} = req.body
@@ -37,5 +39,44 @@ module.exports = {
       })
     }
 
+  },
+  async login(req, res, next){
+    const {email, senha} = req.body;
+    const client = await pool.connect();
+
+    try {
+      const hasUser = await client.query(`SELECT * FROM users WHERE email = $1`, [email]);
+      if(!hasUser.rows[0]) return res.status(401).send({
+        message: 'E-mail ou senha invalida',
+        statusCode: 401
+      })
+
+      const result = await bcrypt.compare(senha.toString(), hasUser.rows[0].senha)
+
+      if(result) {
+        const token = jwt.sign({
+          id_usuario: hasUser.rows[0].id_usuario,
+          email: hasUser.rows[0].email
+        }, authSecret, 
+        {
+          expiresIn: '1h'
+        });
+        return res.status(200).send({
+        message: 'Logado com sucesso',
+        token
+      })
+    }
+
+      return res.status(401).send({
+        message: 'E-mail ou senha invalida',
+        statusCode: 401
+      })
+    } catch (error) {
+      console.log('Deu merda', error)
+      res.status(500).send({
+        message: 'Error interno',
+        statusCode: 500
+      })
+    }
   }
 };

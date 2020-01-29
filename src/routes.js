@@ -35,5 +35,6 @@ routes.get("/pedidos/:id", RequestController.show);
 routes.delete("/pedidos/:id", RequestController.destroy);
 
 routes.post('/cadastro', UserController.new);
+routes.post('/login', UserController.login);
 
 module.exports = routes;
